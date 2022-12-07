@@ -2,17 +2,18 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
-import ErrorPage from "./pages/404"
+import ErrorPage from "./pages/404";
 import Sidebar from "./components/Sidebar";
+import Home from "./pages/Home";
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <Sidebar title="Your Notes">
-        <h1>Hello</h1>
+        <Home />
       </Sidebar>
     ),
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/archive",
