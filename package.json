@@ -21,7 +21,6 @@
     "react-router-dom": "^6.4.4",
     "react-spinners": "^0.13.7",
     "react-toastify": "^9.1.1",
-    "reactjs-localstorage": "^1.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ import Modal from "../components/Modal";
 import useFetch from "../hooks/UseFetch";
 import { PencilAltIcon, PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import { Link } from "react-router-dom";
-import { arrayRemove, doc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 
 const Home = () => {
   const [user] = useAuthState(auth);
@@ -13,7 +13,9 @@ const Home = () => {
   const { data, loading, error, setRand } = useFetch();
 
   const deleteNote = async (note) => {
-    let del = confirm(`Are you sure you want to delete '${note.title}' note?`);
+    let del = confirm(
+      `Are you sure you want to move '${note.title}' to archive?`
+    );
     if (del == true) {
       const pathRef = doc(db, "users", user.email);
       await updateDoc(pathRef, {
@@ -21,6 +23,9 @@ const Home = () => {
       });
       setRand(Math.random());
       alert(`${note.title} has been deleted`);
+      await updateDoc(pathRef, {
+        archive: arrayUnion(note),
+      });
     } else {
       alert("function aborted");
     }
