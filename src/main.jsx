@@ -5,6 +5,8 @@ import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
 import ErrorPage from "./pages/404";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
+import AddNote from "./pages/AddNote";
+import Edit from "./pages/Edit";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -16,10 +18,27 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "/edit/:id",
+    element: (
+      <Sidebar title="Details">
+        <Edit />
+      </Sidebar>
+    ),
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "/archive",
     element: (
       <Sidebar title="Archive">
         <h1>Hello archive</h1>
+      </Sidebar>
+    ),
+  },
+  {
+    path: "/add",
+    element: (
+      <Sidebar title="Add Todo">
+        <AddNote />
       </Sidebar>
     ),
   },

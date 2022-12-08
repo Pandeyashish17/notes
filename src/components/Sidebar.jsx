@@ -7,11 +7,14 @@ import {
   XIcon,
   PencilAltIcon,
   ArchiveIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/outline";
 import { SearchIcon } from "@heroicons/react/solid";
 import Loading from "./Loader";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { ToastContainer, toast } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
 import { auth, db, provider } from "../config/firebase";
 
 import { useLocation, Link } from "react-router-dom";
@@ -31,12 +34,19 @@ export default function Sidebar({ title, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, loading] = useAuthState(auth);
   if (loading) return <Loading />;
+
   const navigation = [
     {
       name: "Your Notes",
       href: "/",
       icon: PencilAltIcon,
       current: location.pathname == "/",
+    },
+    {
+      name: "Add Note",
+      href: "/add",
+      icon: PlusCircleIcon,
+      current: location.pathname == "/add",
     },
     {
       name: "Archive",
@@ -187,7 +197,7 @@ export default function Sidebar({ title, children }) {
               </button>
               <div className="flex-1 px-4 flex justify-between">
                 <div className="flex-1 flex">
-                  <form className="w-full flex md:ml-0" action="#" method="GET">
+                  <form className="w-full flex md:ml-0">
                     <label htmlFor="search-field" className="sr-only">
                       Search
                     </label>
@@ -255,6 +265,7 @@ export default function Sidebar({ title, children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                   <h1 className="text-2xl font-semibold text-gray-900">
                     {title}
+                    <ToastContainer />
                   </h1>
                 </div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">

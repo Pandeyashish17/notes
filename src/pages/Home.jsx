@@ -1,54 +1,66 @@
 import React, { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../config/firebase";
 import Modal from "../components/Modal";
+import useFetch from "../hooks/UseFetch";
+import { PencilAltIcon, PlusIcon, TrashIcon } from "@heroicons/react/outline";
+import { Link } from "react-router-dom";
+import { arrayRemove, doc, updateDoc } from "firebase/firestore";
 
 const Home = () => {
   const [user] = useAuthState(auth);
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  useEffect(() => {
-    let isActive = true;
-    if (!user) return;
-    const getData = async () => {
-      setError(false);
-      const docRef = doc(db, "users", user.email);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists() && isActive) {
-        setData(docSnap.data());
-      } else {
-        setError(trues);
-      }
-    };
-    getData();
-    return () => {
-      isActive = false;
-    };
-  }, [user]);
-  console.log(data);
+  const { data, loading, error, setRand } = useFetch();
+
+  const deleteNote = async (note) => {
+    let del = confirm(`Are you sure you want to delete '${note.title}' note?`);
+    if (del == true) {
+      const pathRef = doc(db, "users", user.email);
+      await updateDoc(pathRef, {
+        notes: arrayRemove(note),
+      });
+      setRand(Math.random());
+      alert(`${note.title} has been deleted`);
+    } else {
+      alert("function aborted");
+    }
+  };
   return (
-    <div className="relative h-[75vh]">
-      Home
-      <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      <button className="fixed right-5 bottom-4 bg-indigo-700 transition-all hover:scale-105 duration-500 p-2 hover:bg-indigo-500 rounded-full" onClick={()=>setModalOpen(true)}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="#fff"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-10 h-10"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      </button>
-    </div>
+    <>
+      {data && (
+        <div className="relative h-[75vh]">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
+            {data.notes.map((note) => {
+              return (
+                <div
+                  className="p-4 h-[10vh] bg-slate-300 rounded-md line-clamp-1 overflow-y-scroll "
+                  key={note.id}
+                >
+                  <div className="flex justify-between">
+                    <span>{note.title}</span>
+                    <div className="flex gap-2">
+                      <TrashIcon
+                        className="w-6 h-6 text-black   hover:text-gray-500   hover:scale-105 duration-300 transition-all cursor-pointer"
+                        onClick={() => deleteNote(note)}
+                      />
+                      <Link to={`/edit/${note.id}`}>
+                        <PencilAltIcon className="w-6 h-6 text-black hover:text-gray-500 hover:scale-105 duration-300 transition-all cursor-pointer" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <Link
+            className="fixed right-5 bottom-4 bg-indigo-700 transition-all hover:scale-105 duration-500 p-2 hover:bg-indigo-500 rounded-full"
+            to="/add"
+          >
+            <PlusIcon className="h-6 w-6 text-white" aria-hidden="true" />
+          </Link>
+        </div>
+      )}
+    </>
   );
 };
 
