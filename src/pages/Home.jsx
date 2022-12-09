@@ -6,12 +6,15 @@ import useFetch from "../hooks/UseFetch";
 import { PencilAltIcon, PlusIcon, TrashIcon } from "@heroicons/react/outline";
 import { Link } from "react-router-dom";
 import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import Loader from "../components/Loader";
 
 const Home = () => {
   const [user] = useAuthState(auth);
   const [modalOpen, setModalOpen] = useState(false);
   const { data, loading, error, setRand } = useFetch();
 
+  if (loading) return <Loader />;
+  if (error) return "Error";
   const deleteNote = async (note) => {
     let del = confirm(
       `Are you sure you want to move '${note.title}' to archive?`

@@ -3,8 +3,8 @@ import PacmanLoader from "react-spinners/PacmanLoader";
 
 const Loader = () => {
   return (
-    <div className="min-h-screen grid place-content-center">
-      <PacmanLoader  />
+    <div className="min-h-[85vh] grid place-content-center">
+      <PacmanLoader color="#1F2937" />
     </div>
   );
 };

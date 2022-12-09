@@ -1,14 +1,21 @@
-import { PencilAltIcon, PlusIcon, TrashIcon } from "@heroicons/react/outline";
-import { arrayRemove, doc, updateDoc } from "firebase/firestore";
+import {
+  PencilAltIcon,
+  PlusIcon,
+  RefreshIcon,
+  TrashIcon,
+} from "@heroicons/react/outline";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader";
 import { auth, db } from "../config/firebase";
 import useFetch from "../hooks/UseFetch";
 
 const Archive = () => {
-  const { data, setRand } = useFetch();
+  const { data, setRand, loading } = useFetch();
   const [user] = useAuthState(auth);
+  if (loading) return <Loader />;
   const deleteNote = async (note) => {
     let del = confirm(`Are you sure you want to delete '${note.title}' note?`);
     if (del == true) {
@@ -17,7 +24,26 @@ const Archive = () => {
         archive: arrayRemove(note),
       });
       setRand(Math.random());
+      alert(`${note.title} has been moved`);
+    } else {
+      alert("function aborted");
+    }
+  };
+
+  const UnArchiveNote = async (note) => {
+    let UnArchiveNoteOrNot = confirm(
+      `Are you sure you want to Move '${note.title}' note to notes page?`
+    );
+    if (UnArchiveNoteOrNot == true) {
+      const pathRef = doc(db, "users", user.email);
+      await updateDoc(pathRef, {
+        archive: arrayRemove(note),
+      });
+      setRand(Math.random());
       alert(`${note.title} has been deleted`);
+      await updateDoc(pathRef, {
+        notes: arrayUnion(note),
+      });
     } else {
       alert("function aborted");
     }
@@ -38,6 +64,16 @@ const Archive = () => {
                   >
                     <div className="flex justify-between">
                       <span>{note.title}</span>
+                      <div className="flex gap-2">
+                        <RefreshIcon
+                          className="w-6 h-6 text-black hover:text-gray-500 hover:scale-105 duration-300 transition-all cursor-pointer"
+                          onClick={() => UnArchiveNote(note)}
+                        />
+                        <TrashIcon
+                          className="w-6 h-6 text-black hover:text-gray-500 hover:scale-105 duration-300 transition-all cursor-pointer"
+                          onClick={() => deleteNote(note)}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
