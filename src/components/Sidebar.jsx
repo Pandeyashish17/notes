@@ -236,7 +236,7 @@ export default function Sidebar({ title, children }) {
                         <Menu.Item>
                           <button
                             onClick={() => auth.signOut()}
-                            className="block px-4 py-2 text-sm text-gray-700"
+                            className="block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                           >
                             Log Out
                           </button>
